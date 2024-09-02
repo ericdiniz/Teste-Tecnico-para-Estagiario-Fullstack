@@ -1,13 +1,11 @@
 import dotenv from 'dotenv';
 import express from "express";
-import authenticateToken from '../middlewares/authenticateToken.js';
+import { getTasksByIdUser } from "../controllers/taskController.js";
 
 dotenv.config();
 
-
 const router = express.Router()
 
-router.get("/getTasksByIdUser", authenticateToken, getTasksByIdUser)
-
+router.get("/getTasksByIdUser", getTasksByIdUser)
 
 export default router;
