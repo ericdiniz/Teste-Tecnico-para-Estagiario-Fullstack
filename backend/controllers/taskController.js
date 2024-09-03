@@ -44,3 +44,19 @@ export const updateTasks = (req, res, next) => {
         return res.status(200).json({ message: "Task updated successfully" });
     });
 };
+
+export const deleteTasks = (req, res, next) => {
+    const { id, user_id } = req.body;
+
+    const q = "DELETE FROM tasks WHERE id = ? AND user_id = ?;";
+
+    db.query(q, [id, user_id], (err, result) => {
+        if (err) {
+            return res.status(400).json(err);
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Task not found or user not authorized to delete this task" });
+        }
+        return res.status(200).json({ message: "Task deleted successfully" });
+    });
+};
