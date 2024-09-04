@@ -6,7 +6,7 @@ dotenv.config();
 
 const router = express.Router()
 
-router.get("/getTasksByIdUser", getTasksByIdUser)
+router.get("/getTasksByIdUser/:user_id", getTasksByIdUser);
 router.post("/createTasks", createTasks)
 router.patch("/updateTasks/:id", updateTasks);
 router.delete("/deleteTasks/", deleteTasks);

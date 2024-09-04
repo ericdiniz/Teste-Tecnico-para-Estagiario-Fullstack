@@ -1,37 +1,49 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { DataGrid } from "@mui/x-data-grid";
+import axios from "axios";
 import * as React from "react";
-
-const columns = [
-  { field: "id", headerName: "ID", width: 90 },
-  {
-    field: "title",
-    headerName: "Title",
-    width: 150,
-    editable: true,
-  },
-  {
-    field: "Description",
-    headerName: "Description",
-    width: 600,
-    editable: true,
-  },
-];
-
-const rows = [
-  { id: 1, Description: "Snow", title: "Jon" },
-  { id: 2, Description: "Lannister", title: "Cersei" },
-  { id: 3, Description: "Lannister", title: "Jaime" },
-  { id: 4, Description: "Stark", title: "Arya" },
-  { id: 5, Description: "Targaryen", title: "Daenerys" },
-  { id: 6, Description: "Melisandre", title: "Daenerys" },
-  { id: 7, Description: "Clifford", title: "Ferrara" },
-  { id: 8, Description: "Frances", title: "Rossini" },
-  { id: 9, Description: "Roxie", title: "Harvey" },
-];
+import { useEffect, useState } from "react";
 
 export default function DbForm() {
+  const [rows, setRows] = useState([]); // Estado para armazenar as tarefas
+
+  // Obtendo o usuário do localStorage e buscando tarefas
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      fetchTarefas(user.id);
+    }
+  }, []);
+
+  // Função para buscar as tarefas do backend
+  const fetchTarefas = async (userId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9999/tasks/getTasksByIdUser/${userId}`
+      );
+      setRows(response.data); // Atualizando o estado com as tarefas obtidas
+    } catch (error) {
+      console.error("Erro ao buscar as tarefas:", error);
+    }
+  };
+
+  const columns = [
+    { field: "id", headerName: "ID", width: 100 },
+    {
+      field: "title",
+      headerName: "Title",
+      width: 200,
+      editable: true,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      width: 800,
+      editable: true,
+    },
+  ];
+
   return (
     <Box
       sx={{
@@ -49,8 +61,8 @@ export default function DbForm() {
       <Box
         sx={{
           height: 600,
-          width: "100%", // Ajuste o tamanho conforme necessário
-          maxWidth: 1200, // Para limitar a largura máxima
+          width: "100%",
+          maxWidth: 1200,
         }}
       >
         <DataGrid
@@ -59,7 +71,7 @@ export default function DbForm() {
           initialState={{
             pagination: {
               paginationModel: {
-                pageSize: rows.length,
+                pageSize: 10,
               },
             },
           }}

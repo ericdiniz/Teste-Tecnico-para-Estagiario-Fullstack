@@ -4,15 +4,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const getTasksByIdUser = (req, res, next) => {
-    const { user_id } = req.body;
-
-    const q = "SELECT * FROM tasks where user_id=?";
+    const { user_id } = req.params;
+    const q = "SELECT * FROM tasks WHERE user_id=?";
 
     db.query(q, [user_id], (err, data) => {
         if (err) return res.status(400).json(err);
         return res.status(200).json(data);
     });
 }
+
 
 export const createTasks = (req, res, next) => {
     const { title, description, user_id } = req.body;

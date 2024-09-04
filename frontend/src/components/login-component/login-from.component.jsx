@@ -29,7 +29,9 @@ const LoginForm = () => {
     const baseUrl = "http://localhost:9999/login";
     try {
       const response = await axios.post(baseUrl, form);
-      console.log("Resposta do servidor:", response.data);
+      //console.log("Resposta do servidor:", response.data);
+      localStorage.setItem("user", JSON.stringify(response.data.data));
+      console.log(JSON.parse(localStorage.getItem("user")));
       navigate("/dashboard");
     } catch (error) {
       // Certifique-se de capturar a resposta de erro corretamente
@@ -62,15 +64,7 @@ const LoginForm = () => {
       >
         <CssBaseline />
 
-        <Grid2
-          item
-          xs={12}
-          sm={8}
-          md={5}
-          component={Paper}
-          elevation={6}
-          square
-        >
+        <Grid2 xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
             sx={{
               my: 8,

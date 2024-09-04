@@ -50,7 +50,7 @@ export const login = (req, res, next) => {
                 }
                 if (isMatch) {
                     const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: '1y' });
-                    return res.status(200).json({ message: "Login successful", token });
+                    return res.status(201).json({ message: "Login successful", token, data: user });
                 } else {
                     return res.status(401).json({ message: "Password incorrect" });
                 }
