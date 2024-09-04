@@ -13,8 +13,10 @@ import { Grid2 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 
+import axios from "axios";
+
 const initialForm = {
-  login: "",
+  email: "",
   password: "",
 };
 
@@ -24,10 +26,20 @@ const LoginForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    const baseUrl = "http://localhost:9999/login";
     try {
+      const response = await axios.post(baseUrl, form);
+      console.log("Resposta do servidor:", response.data);
+      navigate("/dashboard");
     } catch (error) {
-      alert("Um erro ocorreu: ", error);
+      // Certifique-se de capturar a resposta de erro corretamente
+      console.error(
+        "Erro no login:",
+        error.response ? error.response.data : error.message
+      );
+      alert(
+        `Um erro ocorreu: ${error.response ? error.response.data.message : error.message}`
+      );
     }
   };
 
@@ -84,10 +96,10 @@ const LoginForm = () => {
                 margin="normal"
                 required
                 fullWidth
-                id="login"
-                label="CNPJ/CPF"
-                name="login"
-                autoComplete="login"
+                id="email"
+                label="E-mail"
+                name="email"
+                autoComplete="email"
                 helperText="Digite seu email"
                 autoFocus
                 onChange={handleChangeForm}
