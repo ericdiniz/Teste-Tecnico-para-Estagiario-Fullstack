@@ -1,18 +1,16 @@
+import RegisterIcon from "@mui/icons-material/Login";
+import { Grid2 } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
-import { useState } from "react";
-
-import RegisterIcon from "@mui/icons-material/Login";
-import { Grid2 } from "@mui/material";
-
 import Typography from "@mui/material/Typography";
-import { useNavigate } from "react-router-dom";
-
 import axios from "axios";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { validateEmail, validatePassword } from "../../utils/validation"; // Importando as funções de validação
 
 const initialForm = {
   email: "",
@@ -22,10 +20,26 @@ const initialForm = {
 const SingUpForm = () => {
   const [form, setForm] = useState(initialForm);
   const [errorMessage, setErrorMessage] = useState(""); // Estado para armazenar mensagem de erro
+  const [formErrors, setFormErrors] = useState({ email: "", password: "" }); // Armazena os erros de validação
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Validação do e-mail e senha
+    const emailValid = validateEmail(form.email);
+    const passwordValid = validatePassword(form.password);
+
+    if (!emailValid || !passwordValid) {
+      setFormErrors({
+        email: emailValid ? "" : "E-mail inválido",
+        password: passwordValid
+          ? ""
+          : "A senha deve ter pelo menos 6 caracteres",
+      });
+      return; // Não enviar o formulário se houver erros de validação
+    }
+
     const baseUrl = "http://localhost:9999/cadastrar-usuario";
     try {
       const response = await axios.post(baseUrl, form);
@@ -46,6 +60,7 @@ const SingUpForm = () => {
   const handleChangeForm = (event) => {
     const { name, value } = event.target;
     setForm({ ...form, [name]: value });
+    setFormErrors({ ...formErrors, [name]: "" }); // Limpa o erro ao digitar
   };
 
   return (
@@ -92,8 +107,8 @@ const SingUpForm = () => {
                 label="E-mail"
                 name="email"
                 autoComplete="email"
-                helperText="Digite seu email"
-                autoFocus
+                helperText={formErrors.email || "Digite seu email"}
+                error={!!formErrors.email}
                 onChange={handleChangeForm}
               />
               <TextField
@@ -105,7 +120,8 @@ const SingUpForm = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                helperText="Digite sua senha"
+                helperText={formErrors.password || "Digite sua senha"}
+                error={!!formErrors.password}
                 onChange={handleChangeForm}
               />
 
