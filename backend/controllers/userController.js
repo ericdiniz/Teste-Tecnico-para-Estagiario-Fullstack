@@ -19,19 +19,34 @@ export const getUsers = (req, res, next) => {
 
 export const setUser = (req, res, next) => {
     const { email, password } = req.body;
-    bcrypt.hash(password, 10, (err, hash) => {
+
+    // Primeiro, verificar se o e-mail já existe no banco de dados
+    const checkEmailQuery = "SELECT * FROM users WHERE email = ?";
+    db.query(checkEmailQuery, [email], (err, result) => {
         if (err) {
             return res.status(400).json(err);
         }
-        const q = "INSERT INTO users (email, password) VALUES (?, ?);";
-        db.query(q, [email, hash], (err, data) => {
+        // Se já existir, retorna uma mensagem de erro
+        if (result.length > 0) {
+            return res.status(400).json({ message: "O e-mail já está cadastrado" });
+        }
+
+        // Se não existir, prosseguir com a inserção
+        bcrypt.hash(password, 10, (err, hash) => {
             if (err) {
                 return res.status(400).json(err);
             }
-            return res.status(200).json(data);
+            const q = "INSERT INTO users (email, password) VALUES (?, ?);";
+            db.query(q, [email, hash], (err, data) => {
+                if (err) {
+                    return res.status(400).json(err);
+                }
+                return res.status(200).json({ message: "Usuário cadastrado com sucesso!" });
+            });
         });
     });
 }
+
 
 
 export const login = (req, res, next) => {

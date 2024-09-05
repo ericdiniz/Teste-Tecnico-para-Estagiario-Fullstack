@@ -21,24 +21,23 @@ const initialForm = {
 
 const SingUpForm = () => {
   const [form, setForm] = useState(initialForm);
+  const [errorMessage, setErrorMessage] = useState(""); // Estado para armazenar mensagem de erro
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const baseUrl = "http://localhost:9999/login";
+    const baseUrl = "http://localhost:9999/cadastrar-usuario";
     try {
       const response = await axios.post(baseUrl, form);
-      //console.log("Resposta do servidor:", response.data);
-      localStorage.setItem("user", JSON.stringify(response.data.data));
-      console.log(JSON.parse(localStorage.getItem("user")));
-      navigate("/");
+      console.log(response.data);
+      alert("Usuário cadastrado com sucesso!");
+      navigate("/"); // Redireciona para a página inicial ou de login
     } catch (error) {
-      // Certifique-se de capturar a resposta de erro corretamente
       console.error(
-        "Erro no login:",
+        "Erro no cadastro:",
         error.response ? error.response.data : error.message
       );
-      alert(
+      setErrorMessage(
         `Um erro ocorreu: ${error.response ? error.response.data.message : error.message}`
       );
     }
@@ -77,7 +76,7 @@ const SingUpForm = () => {
               <RegisterIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Register
+              Registrar como novo usuário
             </Typography>
             <Box
               component="form"
@@ -109,6 +108,12 @@ const SingUpForm = () => {
                 helperText="Digite sua senha"
                 onChange={handleChangeForm}
               />
+
+              {errorMessage && (
+                <Typography variant="body2" color="error" align="center">
+                  {errorMessage}
+                </Typography>
+              )}
 
               <Button
                 type="submit"
