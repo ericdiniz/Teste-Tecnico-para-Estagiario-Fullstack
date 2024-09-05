@@ -7,19 +7,17 @@ import FullScreenDialog from "../full-screen-dialog-component/full-screen-dialog
 export default function DbForm() {
   const [rows, setRows] = useState([]);
   const [usuarioData, setUsuarioData] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false); // Estado para abrir/fechar o modal
-  const [editingTask, setEditingTask] = useState(null); // Estado para armazenar a tarefa que está sendo editada
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
 
-  // Obtendo o usuário do localStorage e buscando tarefas
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
-      setUsuarioData(user); // Salvando os dados do usuário no estado
+      setUsuarioData(user);
       fetchTarefas(user.id);
     }
   }, []);
 
-  // Função para buscar as tarefas do backend
   const fetchTarefas = async (userId) => {
     try {
       const response = await axios.get(
@@ -31,19 +29,16 @@ export default function DbForm() {
     }
   };
 
-  // Função para abrir o modal de cadastro ou edição
   const handleOpenModal = (task = null) => {
-    setEditingTask(task); // Define a tarefa sendo editada ou null para cadastro
+    setEditingTask(task);
     setModalOpen(true);
   };
 
-  // Função para fechar o modal
   const handleCloseModal = () => {
     setModalOpen(false);
-    setEditingTask(null); // Limpa a tarefa em edição ao fechar o modal
+    setEditingTask(null);
   };
 
-  // Função para deletar tarefa
   const handleDelete = async (id) => {
     try {
       if (!usuarioData) {
@@ -68,6 +63,17 @@ export default function DbForm() {
     }
   };
 
+  const handleFinalize = (id) => {
+    const confirmation = window.confirm("Deseja realmente finalizar a tarefa?");
+    if (!confirmation) return;
+
+    setRows((prevRows) =>
+      prevRows.map((row) =>
+        row.id === id ? { ...row, finalizada: true, disabled: true } : row
+      )
+    );
+  };
+
   const columns = [
     { field: "id", headerName: "ID", width: 100 },
     {
@@ -86,41 +92,47 @@ export default function DbForm() {
       field: "actions",
       headerName: "Ações",
       width: 300,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 1,
-            width: "100%",
-          }}
-        >
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => alert(`Finalizar tarefa ${params.row.id}`)}
-            sx={{ minWidth: "80px" }}
+      renderCell: (params) => {
+        if (params.row.finalizada) {
+          return <Typography variant="body1">FINALIZADA</Typography>;
+        }
+
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              gap: 1,
+              width: "100%",
+            }}
           >
-            Finalizar
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleOpenModal(params.row)} // Abre o modal com os dados da tarefa para editar
-            sx={{ minWidth: "80px" }}
-          >
-            Editar
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => handleDelete(params.row.id)}
-            sx={{ minWidth: "80px" }}
-          >
-            Deletar
-          </Button>
-        </Box>
-      ),
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => handleFinalize(params.row.id)}
+              sx={{ minWidth: "80px" }}
+            >
+              Finalizar
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleOpenModal(params.row)}
+              sx={{ minWidth: "80px" }}
+            >
+              Editar
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => handleDelete(params.row.id)}
+              sx={{ minWidth: "80px" }}
+            >
+              Deletar
+            </Button>
+          </Box>
+        );
+      },
     },
   ];
 
@@ -156,21 +168,13 @@ export default function DbForm() {
         </Button>
       </Box>
 
-      <Box
-        sx={{
-          height: 600,
-          width: "100%",
-          maxWidth: 1200,
-        }}
-      >
+      <Box sx={{ height: 600, width: "100%", maxWidth: 1200 }}>
         <DataGrid
           rows={rows}
           columns={columns}
           initialState={{
             pagination: {
-              paginationModel: {
-                pageSize: 10,
-              },
+              paginationModel: { pageSize: 10 },
             },
           }}
           pageSizeOptions={[5, 10]}
@@ -179,12 +183,11 @@ export default function DbForm() {
         />
       </Box>
 
-      {/* Modal para cadastrar ou editar tarefa */}
       <FullScreenDialog
         open={modalOpen}
         handleClose={handleCloseModal}
-        taskData={editingTask} // Passa os dados da tarefa para o modal, se houver
-        refreshTasks={() => fetchTarefas(usuarioData.id)} // Atualiza as tarefas no dashboard
+        taskData={editingTask}
+        refreshTasks={() => fetchTarefas(usuarioData.id)}
       />
     </Box>
   );
