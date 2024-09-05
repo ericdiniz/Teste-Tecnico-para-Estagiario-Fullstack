@@ -65,6 +65,7 @@ const FullScreenDialog = ({ open, handleClose, taskData, refreshTasks }) => {
       return; // Não enviar se os campos estiverem vazios
     }
 
+    const token = localStorage.getItem("token");
     try {
       const url = taskData // Se taskData existe, estamos editando
         ? `http://localhost:9999/tasks/updateTasks/${taskData.id}`
@@ -76,7 +77,11 @@ const FullScreenDialog = ({ open, handleClose, taskData, refreshTasks }) => {
       // Use PATCH para atualização
       const method = taskData ? "patch" : "post";
 
-      await axios[method](url, form); // Aguarda a resposta da API
+      await axios[method](url, form, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Adiciona o token JWT ao cabeçalho
+        },
+      }); // Aguarda a resposta da API
 
       // Limpa o formulário, fecha o modal e recarrega as tarefas no Dashboard
       setForm(initialForm);

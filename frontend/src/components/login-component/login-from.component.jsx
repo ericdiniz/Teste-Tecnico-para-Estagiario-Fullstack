@@ -8,9 +8,9 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/authContext"; // Importa o contexto de autenticação
+import AuthContext from "../../context/authContext";
 
 const initialForm = {
   email: "",
@@ -19,24 +19,18 @@ const initialForm = {
 
 const LoginForm = () => {
   const [form, setForm] = useState(initialForm);
-  const { login } = useAuth(); // Usa a função de login do contexto
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const baseUrl = "http://localhost:9999/login";
     try {
-      const response = await axios.post(baseUrl, form);
-      login(response.data.data); // Atualiza o contexto de login
+      const response = await axios.post("http://localhost:9999/login", form);
+      const token = response.data.token;
+      login(token);
       navigate("/dashboard");
     } catch (error) {
-      console.error(
-        "Erro no login:",
-        error.response ? error.response.data : error.message
-      );
-      alert(
-        `Um erro ocorreu: ${error.response ? error.response.data.message : error.message}`
-      );
+      console.error("Erro no login:", error);
     }
   };
 

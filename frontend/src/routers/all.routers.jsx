@@ -8,7 +8,6 @@ import SingUpPage from "../pages/register/register.page";
 const AllRoutes = () => {
   return (
     <Routes>
-      {/* A página de login e registro são acessíveis sem autenticação */}
       <Route path="/" element={<LoginPage />} />
       <Route path="/register" element={<SingUpPage />} />
 

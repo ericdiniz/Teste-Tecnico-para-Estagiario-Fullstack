@@ -1,8 +1,8 @@
 import { Box, Button, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Importar useNavigate para redirecionar
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import FullScreenDialog from "../full-screen-dialog-component/full-screen-dialog.component";
 
 export default function DbForm() {
@@ -10,30 +10,42 @@ export default function DbForm() {
   const [usuarioData, setUsuarioData] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  const navigate = useNavigate(); // Hook para redirecionar
+  const navigate = useNavigate();
 
-  // Verificar se o usuário está logado ao carregar a página
+  const fetchTarefas = useCallback(
+    async (userId, token) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:9999/tasks/getTasksByIdUser/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setRows(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar as tarefas:", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        }
+      }
+    },
+    [navigate]
+  );
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) {
-      // Se não há usuário logado, redireciona para a página de login
+    const token = localStorage.getItem("token");
+
+    if (!user || !token) {
+      // Se não há usuário logado ou token, redireciona para a página de login
       navigate("/");
     } else {
       setUsuarioData(user);
-      fetchTarefas(user.id);
+      fetchTarefas(user.id, token); // Passa o token para as requisições
     }
-  }, [navigate]);
-
-  const fetchTarefas = async (userId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:9999/tasks/getTasksByIdUser/${userId}`
-      );
-      setRows(response.data);
-    } catch (error) {
-      console.error("Erro ao buscar as tarefas:", error);
-    }
-  };
+  }, [navigate, fetchTarefas]);
 
   const handleOpenModal = (task = null) => {
     setEditingTask(task);
@@ -46,23 +58,17 @@ export default function DbForm() {
   };
 
   const handleDelete = async (id) => {
+    const token = localStorage.getItem("token");
     try {
-      if (!usuarioData) {
-        alert("Usuário não encontrado.");
-        return;
-      }
+      await axios.delete(`http://localhost:9999/tasks/deleteTasks`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Adiciona o token JWT ao cabeçalho
+        },
+        data: { id: id, user_id: usuarioData.id },
+      });
 
-      const response = await axios.delete(
-        `http://localhost:9999/tasks/deleteTasks`,
-        {
-          data: { id: id, user_id: usuarioData.id },
-        }
-      );
-
-      if (response.status === 200) {
-        setRows((prevRows) => prevRows.filter((row) => row.id !== id));
-        alert(`Tarefa ${id} deletada com sucesso!`);
-      }
+      setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+      alert(`Tarefa ${id} deletada com sucesso!`);
     } catch (error) {
       console.error("Erro ao deletar a tarefa:", error);
       alert("Erro ao deletar a tarefa.");
@@ -73,10 +79,19 @@ export default function DbForm() {
     const confirmation = window.confirm("Deseja realmente finalizar a tarefa?");
     if (!confirmation) return;
 
+    const token = localStorage.getItem("token");
     try {
-      await axios.patch(`http://localhost:9999/tasks/finalizeTask/${id}`, {
-        user_id: usuarioData.id,
-      });
+      await axios.patch(
+        `http://localhost:9999/tasks/finalizeTask/${id}`,
+        {
+          user_id: usuarioData.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Adiciona o token JWT ao cabeçalho
+          },
+        }
+      );
 
       setRows((prevRows) =>
         prevRows.map((row) =>
@@ -202,7 +217,9 @@ export default function DbForm() {
         open={modalOpen}
         handleClose={handleCloseModal}
         taskData={editingTask}
-        refreshTasks={() => fetchTarefas(usuarioData.id)}
+        refreshTasks={() =>
+          fetchTarefas(usuarioData.id, localStorage.getItem("token"))
+        }
       />
     </Box>
   );

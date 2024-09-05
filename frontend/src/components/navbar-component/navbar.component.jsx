@@ -1,27 +1,19 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import AuthContext from "../../context/authContext";
 
 const Navbar = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const { isAuthenticated, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
-      setLoggedIn(true);
-    }
-  }, []);
-
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    setLoggedIn(false);
+    logout();
     navigate("/");
   };
 
   return (
-    <AppBar position="fixed" color="primary">
-      {" "}
+    <AppBar position="fixed">
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Gerenciador de Tarefas
@@ -33,7 +25,7 @@ const Navbar = () => {
           <Button color="inherit" component={Link} to="/register">
             Registrar
           </Button>
-          {loggedIn ? (
+          {isAuthenticated ? (
             <Button color="inherit" onClick={handleLogout}>
               Logout
             </Button>
