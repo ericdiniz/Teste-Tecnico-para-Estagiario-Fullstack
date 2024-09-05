@@ -9,9 +9,7 @@ import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
-import { useEffect, useState } from "react";
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const initialForm = {
   title: "",
@@ -22,9 +20,22 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const FullScreenDialog = ({ open, handleClose, refreshTasks }) => {
+const FullScreenDialog = ({ open, handleClose, taskData, refreshTasks }) => {
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState({ title: false, description: false });
+
+  // Preencher o formulário com os dados da tarefa se estiver em modo de edição
+  useEffect(() => {
+    if (taskData) {
+      setForm({
+        title: taskData.title,
+        description: taskData.description,
+        id: taskData.id, // Incluímos o ID da tarefa para a edição
+      });
+    } else {
+      setForm(initialForm); // Reseta o formulário ao abrir o modal para cadastrar
+    }
+  }, [taskData]);
 
   // Recupera o user_id do localStorage
   useEffect(() => {
@@ -55,16 +66,25 @@ const FullScreenDialog = ({ open, handleClose, refreshTasks }) => {
     }
 
     try {
-      const url = "http://localhost:9999/tasks/createTasks";
-      await axios.post(url, form); // Aguarda a resposta da API
+      const url = taskData // Se taskData existe, estamos editando
+        ? `http://localhost:9999/tasks/updateTasks/${taskData.id}`
+        : "http://localhost:9999/tasks/createTasks";
+
+      console.log(url);
+      console.log(form);
+
+      // Use PATCH para atualização
+      const method = taskData ? "patch" : "post";
+
+      await axios[method](url, form); // Aguarda a resposta da API
 
       // Limpa o formulário, fecha o modal e recarrega as tarefas no Dashboard
       setForm(initialForm);
       handleClose();
       refreshTasks(); // Recarrega as tarefas no dashboard
     } catch (error) {
-      console.error("Erro ao cadastrar tarefa:", error);
-      alert("Ocorreu um erro ao cadastrar a tarefa. Tente novamente.");
+      console.error("Erro ao cadastrar/editar tarefa:", error);
+      alert("Ocorreu um erro ao processar a tarefa. Tente novamente.");
     }
   };
 
@@ -86,7 +106,7 @@ const FullScreenDialog = ({ open, handleClose, refreshTasks }) => {
             <CloseIcon />
           </IconButton>
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-            Cadastrar Tarefa
+            {taskData ? "Editar Tarefa" : "Cadastrar Tarefa"}
           </Typography>
           <Button autoFocus color="inherit" onClick={handleClose}>
             Fechar
@@ -146,7 +166,7 @@ const FullScreenDialog = ({ open, handleClose, refreshTasks }) => {
               Cancelar
             </Button>
             <Button type="submit" variant="contained" color="success">
-              Salvar
+              {taskData ? "Atualizar" : "Salvar"}
             </Button>
           </Box>
         </form>

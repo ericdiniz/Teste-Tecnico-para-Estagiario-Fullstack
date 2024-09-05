@@ -8,6 +8,7 @@ export default function DbForm() {
   const [rows, setRows] = useState([]);
   const [usuarioData, setUsuarioData] = useState(null);
   const [modalOpen, setModalOpen] = useState(false); // Estado para abrir/fechar o modal
+  const [editingTask, setEditingTask] = useState(null); // Estado para armazenar a tarefa que está sendo editada
 
   // Obtendo o usuário do localStorage e buscando tarefas
   useEffect(() => {
@@ -30,14 +31,16 @@ export default function DbForm() {
     }
   };
 
-  // Função para abrir o modal
-  const handleOpenModal = () => {
+  // Função para abrir o modal de cadastro ou edição
+  const handleOpenModal = (task = null) => {
+    setEditingTask(task); // Define a tarefa sendo editada ou null para cadastro
     setModalOpen(true);
   };
 
   // Função para fechar o modal
   const handleCloseModal = () => {
     setModalOpen(false);
+    setEditingTask(null); // Limpa a tarefa em edição ao fechar o modal
   };
 
   // Função para deletar tarefa
@@ -103,7 +106,7 @@ export default function DbForm() {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => alert(`Editar tarefa ${params.row.id}`)}
+            onClick={() => handleOpenModal(params.row)} // Abre o modal com os dados da tarefa para editar
             sx={{ minWidth: "80px" }}
           >
             Editar
@@ -144,7 +147,11 @@ export default function DbForm() {
         <Typography component="h1" variant="h5">
           Dashboard de tarefas
         </Typography>
-        <Button variant="contained" color="success" onClick={handleOpenModal}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={() => handleOpenModal(null)}
+        >
           CADASTRAR TAREFAS
         </Button>
       </Box>
@@ -172,11 +179,12 @@ export default function DbForm() {
         />
       </Box>
 
-      {/* Modal para cadastrar tarefa */}
+      {/* Modal para cadastrar ou editar tarefa */}
       <FullScreenDialog
         open={modalOpen}
         handleClose={handleCloseModal}
-        refreshTasks={() => fetchTarefas(usuarioData.id)} // Passa a função para atualizar as tarefas
+        taskData={editingTask} // Passa os dados da tarefa para o modal, se houver
+        refreshTasks={() => fetchTarefas(usuarioData.id)} // Atualiza as tarefas no dashboard
       />
     </Box>
   );
