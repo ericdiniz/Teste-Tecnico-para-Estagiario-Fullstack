@@ -1,16 +1,16 @@
-import { ThemeProvider } from "@mui/material";
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "../src/context/authContext"; // Importamos o AuthProvider
 import App from "./App";
-import { LightTheme } from "./theme/light.jsx";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <ThemeProvider theme={LightTheme}>
+      <AuthProvider>
         <App />
-      </ThemeProvider>
+      </AuthProvider>
     </BrowserRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
+  document.getElementById("root")
 );

@@ -1,19 +1,16 @@
+import LoginIcon from "@mui/icons-material/Login";
+import { Grid2 } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-
-import LoginIcon from "@mui/icons-material/Login";
-import { Grid2 } from "@mui/material";
-
 import Typography from "@mui/material/Typography";
-import { useNavigate } from "react-router-dom";
-
 import axios from "axios";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/authContext"; // Importa o contexto de autenticação
 
 const initialForm = {
   email: "",
@@ -22,6 +19,7 @@ const initialForm = {
 
 const LoginForm = () => {
   const [form, setForm] = useState(initialForm);
+  const { login } = useAuth(); // Usa a função de login do contexto
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -29,12 +27,9 @@ const LoginForm = () => {
     const baseUrl = "http://localhost:9999/login";
     try {
       const response = await axios.post(baseUrl, form);
-      //console.log("Resposta do servidor:", response.data);
-      localStorage.setItem("user", JSON.stringify(response.data.data));
-      console.log(JSON.parse(localStorage.getItem("user")));
+      login(response.data.data); // Atualiza o contexto de login
       navigate("/dashboard");
     } catch (error) {
-      // Certifique-se de capturar a resposta de erro corretamente
       console.error(
         "Erro no login:",
         error.response ? error.response.data : error.message
@@ -119,11 +114,6 @@ const LoginForm = () => {
               >
                 ENTRAR
               </Button>
-              <Grid2 container>
-                <Grid2 item>
-                  <Link to={"register"}>Não tem uma conta? Registrar!</Link>
-                </Grid2>
-              </Grid2>
             </Box>
           </Box>
         </Grid2>
