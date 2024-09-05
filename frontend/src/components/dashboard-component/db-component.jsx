@@ -2,6 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Importar useNavigate para redirecionar
 import FullScreenDialog from "../full-screen-dialog-component/full-screen-dialog.component";
 
 export default function DbForm() {
@@ -9,14 +10,19 @@ export default function DbForm() {
   const [usuarioData, setUsuarioData] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  const navigate = useNavigate(); // Hook para redirecionar
 
+  // Verificar se o usuário está logado ao carregar a página
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
+    if (!user) {
+      // Se não há usuário logado, redireciona para a página de login
+      navigate("/");
+    } else {
       setUsuarioData(user);
       fetchTarefas(user.id);
     }
-  }, []);
+  }, [navigate]);
 
   const fetchTarefas = async (userId) => {
     try {
