@@ -1,20 +1,19 @@
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { Box, Button, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
-import * as React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import FullScreenDialog from "../full-screen-dialog-component/full-screen-dialog.component";
 
 export default function DbForm() {
   const [rows, setRows] = useState([]);
-  const [usuarioData, setusuarioData] = useState(null);
+  const [usuarioData, setUsuarioData] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false); // Estado para abrir/fechar o modal
 
   // Obtendo o usuário do localStorage e buscando tarefas
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
-      setusuarioData(user); // Salvando os dados do usuário no estado
+      setUsuarioData(user); // Salvando os dados do usuário no estado
       fetchTarefas(user.id);
     }
   }, []);
@@ -31,6 +30,17 @@ export default function DbForm() {
     }
   };
 
+  // Função para abrir o modal
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  // Função para fechar o modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  // Função para deletar tarefa
   const handleDelete = async (id) => {
     try {
       if (!usuarioData) {
@@ -121,9 +131,23 @@ export default function DbForm() {
         justifyContent: "center",
       }}
     >
-      <Typography component="h1" variant="h5" sx={{ marginBottom: 2 }}>
-        Dashboard de tarefas
-      </Typography>
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: 1200,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
+        <Typography component="h1" variant="h5">
+          Dashboard de tarefas
+        </Typography>
+        <Button variant="contained" color="success" onClick={handleOpenModal}>
+          CADASTRAR TAREFAS
+        </Button>
+      </Box>
 
       <Box
         sx={{
@@ -147,6 +171,13 @@ export default function DbForm() {
           disableRowSelectionOnClick
         />
       </Box>
+
+      {/* Modal para cadastrar tarefa */}
+      <FullScreenDialog
+        open={modalOpen}
+        handleClose={handleCloseModal}
+        refreshTasks={() => fetchTarefas(usuarioData.id)} // Passa a função para atualizar as tarefas
+      />
     </Box>
   );
 }
