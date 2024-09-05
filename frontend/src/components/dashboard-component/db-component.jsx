@@ -69,15 +69,24 @@ export default function DbForm() {
     }
   };
 
-  const handleFinalize = (id) => {
+  const handleFinalize = async (id) => {
     const confirmation = window.confirm("Deseja realmente finalizar a tarefa?");
     if (!confirmation) return;
 
-    setRows((prevRows) =>
-      prevRows.map((row) =>
-        row.id === id ? { ...row, finalizada: true, disabled: true } : row
-      )
-    );
+    try {
+      await axios.patch(`http://localhost:9999/tasks/finalizeTask/${id}`, {
+        user_id: usuarioData.id,
+      });
+
+      setRows((prevRows) =>
+        prevRows.map((row) =>
+          row.id === id ? { ...row, finalizada: true } : row
+        )
+      );
+    } catch (error) {
+      console.error("Erro ao finalizar a tarefa:", error);
+      alert("Erro ao finalizar a tarefa.");
+    }
   };
 
   const columns = [

@@ -60,3 +60,17 @@ export const deleteTasks = (req, res, next) => {
         return res.status(200).json({ message: "Task deleted successfully" });
     });
 };
+
+export const finalizeTask = (req, res) => {
+    const { id } = req.params;
+    const { user_id } = req.body; // Pegamos o user_id no corpo da requisição
+
+    const q = "UPDATE tasks SET finalizada = true WHERE id = ? AND user_id = ?";
+
+    db.query(q, [id, user_id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: "Erro ao finalizar a tarefa", err });
+        }
+        return res.status(200).json({ message: "Tarefa finalizada com sucesso" });
+    });
+};
