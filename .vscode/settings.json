@@ -1,0 +1,33 @@
+{
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Enabled",
+        "ssl": {}
+      },
+      "previewLimit": 50,
+      "server": "alabanda2.mariadb.database.azure.com",
+      "port": 3306,
+      "driver": "MariaDB",
+      "name": "alabanda2",
+      "database": "alabanda2",
+      "username": "alabanda@alabanda2",
+      "password": "aA!12345678"
+    },
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "gerenciador-de-tarefas-ericdiniz.cboq8g2e2704.us-east-1.rds.amazonaws.com",
+      "port": 9998,
+      "driver": "MySQL",
+      "database": "gerenciador-de-tarefas-ericdiniz.cboq8g2e2704.us-east-1.rds.amazonaws.com",
+      "username": "admin",
+      "name": "gerenciador-tarefas",
+      "password": "Rainbowsix2018"
+    }
+  ]
+}
