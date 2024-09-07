@@ -1,0 +1,145 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "gerenciador de tarefas",
+    "collectionId": "f02a4004-32ab-4240-95b5-8b50e2c248c2",
+    "dateExported": "2024-09-07T20:45:31.161Z",
+    "version": "1.2",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "3124c51d-832a-4a41-9cb9-cba754dfd816",
+            "colId": "f02a4004-32ab-4240-95b5-8b50e2c248c2",
+            "containerId": "",
+            "name": "get users",
+            "url": "http://localhost:9999/getUsers",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-09-02T21:23:23.017Z",
+            "modified": "2024-09-02T22:32:06.417Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzI1MzE2MTcxLCJleHAiOjE3NTY4NzM3NzF9.sYirLxvuZjzq3BWSfcHE63yU78bYp3xNwg0ui2Ii5Vc"
+            }
+        },
+        {
+            "_id": "f93aaf2b-b4e0-4a85-b425-d88a89008fbc",
+            "colId": "f02a4004-32ab-4240-95b5-8b50e2c248c2",
+            "containerId": "",
+            "name": "cadastrar usuario",
+            "url": "http://localhost:9999/cadastrar-usuario",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-09-02T21:28:00.753Z",
+            "modified": "2024-09-07T20:36:53.227Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"1234\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "11cb360c-3113-456d-aec9-0b2e0a83d12c",
+            "colId": "f02a4004-32ab-4240-95b5-8b50e2c248c2",
+            "containerId": "",
+            "name": "get tasks",
+            "url": "http://localhost:9999/tasks/getTasksByIdUser",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2024-09-02T22:47:55.561Z",
+            "modified": "2024-09-03T19:58:29.847Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"user_id\": 4\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzI1MzE2MTcxLCJleHAiOjE3NTY4NzM3NzF9.sYirLxvuZjzq3BWSfcHE63yU78bYp3xNwg0ui2Ii5Vc"
+            }
+        },
+        {
+            "_id": "2884e09d-d48f-485d-b7e5-1174f1d5cdc9",
+            "colId": "f02a4004-32ab-4240-95b5-8b50e2c248c2",
+            "containerId": "",
+            "name": "login",
+            "url": "http://localhost:9999/login",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-09-02T22:28:47.472Z",
+            "modified": "2024-09-07T20:36:37.658Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"barril\",\n  \"password\": \"1234\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "9de667ac-c053-424b-8189-2b0f4efc9e00",
+            "colId": "f02a4004-32ab-4240-95b5-8b50e2c248c2",
+            "containerId": "",
+            "name": "create tasks",
+            "url": "http://localhost:9999/tasks/createTasks",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-09-03T19:29:51.368Z",
+            "modified": "2024-09-04T21:29:21.021Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"title\": \"taferas 3 do user 3\",\n  \"description\": \"descrição\",\n  \"user_id\": 3\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzI1MzE2MTcxLCJleHAiOjE3NTY4NzM3NzF9.sYirLxvuZjzq3BWSfcHE63yU78bYp3xNwg0ui2Ii5Vc"
+            }
+        },
+        {
+            "_id": "ef690690-35d2-4022-9657-bc45b3cba560",
+            "colId": "f02a4004-32ab-4240-95b5-8b50e2c248c2",
+            "containerId": "",
+            "name": "update tasks",
+            "url": "http://localhost:9999/tasks/updateTasks/1",
+            "method": "PATCH",
+            "sortNum": 40000,
+            "created": "2024-09-03T19:41:44.019Z",
+            "modified": "2024-09-03T19:51:42.948Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"title\": \"2 tarefa\",\n  \"description\": \"2 descrição\",\n  \"user_id\": 1\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzI1MzE2MTcxLCJleHAiOjE3NTY4NzM3NzF9.sYirLxvuZjzq3BWSfcHE63yU78bYp3xNwg0ui2Ii5Vc"
+            }
+        },
+        {
+            "_id": "9175b141-9247-46db-acaa-96be5ecd810b",
+            "colId": "f02a4004-32ab-4240-95b5-8b50e2c248c2",
+            "containerId": "",
+            "name": "delete tasks",
+            "url": "http://localhost:9999/tasks/deleteTasks/",
+            "method": "DELETE",
+            "sortNum": 50000,
+            "created": "2024-09-03T19:53:53.521Z",
+            "modified": "2024-09-03T19:58:36.294Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"id\": 2,\n  \"user_id\": 4\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzI1MzE2MTcxLCJleHAiOjE3NTY4NzM3NzF9.sYirLxvuZjzq3BWSfcHE63yU78bYp3xNwg0ui2Ii5Vc"
+            }
+        }
+    ],
+    "ref": "CjHo6Q_bL5zFi3A8aXv_oWErvA_GUJ-6sbppDSe4i8lrJViDXfq2LZkY5PUe_MU-yezZ_oJxby9thx9GmiK2CA"
+}
